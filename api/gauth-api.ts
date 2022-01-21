@@ -78,7 +78,7 @@ export default class GAuthRequestor {
     }
   }
 
- async parser(): Promise<Tokens> {
+  async parser(): Promise<Tokens> {
     const token = await this.fsPromises.readFile(this.TOKEN_PATH)
     const parsedToken = await JSON.parse(token.toString())
     return parsedToken
@@ -86,23 +86,23 @@ export default class GAuthRequestor {
 
 
   async authenticate(): Promise<boolean> {
-    
+
     try {
 
       const token = await this.fsPromises.readFile(this.TOKEN_PATH)
       const parsedToken = await JSON.parse(token.toString())
       this.authConstruct.setCredentials(parsedToken)
 
-   return true
-      
+      return true
+
     } catch (err) {
       console.log(err)
       return false
     }
-    
+
   }
 
-  async authStatus (){
+  async authStatus() {
     const tokens = await this.parser()
     console.log(await this.authConstruct.getTokenInfo(tokens.access_token))
   }
@@ -112,6 +112,3 @@ export default class GAuthRequestor {
 
 }
 
-
-
-// http://localhost:3000/?state=F33B20A920C7C9D46D38DCC443A8F4566271CE77758CA65DC926115054DEC7CE&code=4/0AX4XfWhSSLHsLU6QH-shbGdX5M0j7ebK2G_77Y-xFZCPN7PumOhagDhmlPF4yTczZSBWSQ&scope=https://www.googleapis.com/auth/drive.metadata.readonly
