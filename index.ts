@@ -2,7 +2,7 @@ import express, { Express, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
-import GAuthRequestor from './api/gauth-api';
+import GAuthRequestor from './api/gauth';
 
 
 dotenv.config();
@@ -25,37 +25,45 @@ const googleAuthRequest = new GAuthRequestor({
     scopes: ['https://www.googleapis.com/auth/drive.metadata.readonly'],
     access_type: "offline",
     client_secret: process.env.CLIENT_SECRET,
-    hosted_domain: "bagelhouse.co"
+    hosted_domain: "bagelhouse.co",
+    TOKEN_PATH: './storage/token.json'
 })
 
-async function runApp(app: Express) {
+ 
 
-    if (await googleAuthRequest.authenticate()) {
-        app.get('/', async (req: Request, res: Response) => {
-            res.send("all good")
-            await googleAuthRequest.authStatus()
-        })
-    } else {
-        app.get('/', async (req: Request, res: Response) => {
-            res.send(`<h1><a href = "${googleAuthRequest.getOAuthURL()}"> Click here </a> </h1>
-                    <h1>    
-                    <form action="/" , method="POST">
-                    <input type="text" id="code" name="code" value="${req.query.code}"><br><br>
-                    <button type="submit" >Click here after Authentication</button>
-                    </form>
-            
-                </h1>`
-            );
+app.get('/', async (req: Request, res: Response) => {
 
-        });
+    const tokenStatus = await googleAuthRequest.tokenStatus()
+    if (tokenStatus.OK) {
+        res.send("all good")
+        console.log("AUTHENTICATION STATUS OK")
+    }
+    if (tokenStatus.EXPIRED_REFRESH_TOKEN) {
 
-        app.post('/', (req: Request, res: Response) => {
-            console.log(req.body.code)
-            googleAuthRequest.setupAuthentication(req.body.code)
-            res.send('all good')
-
-        })
+    res.send(`<h1><a href = "${googleAuthRequest.getOAuthURL()}"> Click here </a> </h1>
+            <h1>    
+            <form action="/" , method="POST">
+            <input type="text" id="code" name="code" value="${req.query.code}"><br><br>
+            <button type="submit" >Click here after Authentication</button>
+            </form>
+    
+        </h1>`
+    );
+    }
+    if (tokenStatus.EXPIRED_ACCESS_TOKEN) {
+        googleAuthRequest.setAuthentication()
     }
 }
 
-runApp(app)
+);
+
+app.post('/', (req: Request, res: Response) => {
+    console.log(req.body.code)
+    googleAuthRequest.setupAuthentication(req.body.code)
+    res.send('all good')
+
+});
+    
+
+
+

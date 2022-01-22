@@ -9,7 +9,8 @@
     "serve": "cross-env NODE_ENV=development concurrently \"tsc --watch\" \"nodemon -q dist/index.js\"",
     "prestart": "npm run build",
     "start": "cross-env NODE_ENV=production node dist/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "audit-resolver": "resolve-audit"
   },
   "author": "",
   "license": "ISC",
@@ -21,6 +22,7 @@
     "axios": "^0.25.0",
     "body-parser": "^1.19.1",
     "cross-env": "^7.0.3",
+    "deepmerge": "^4.2.2",
     "dotenv": "^14.2.0",
     "express": "^4.17.2",
     "follow-redirects": "^1.14.7",
