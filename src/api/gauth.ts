@@ -11,8 +11,6 @@ enum Status {
 }
 type StatusKeys = { [key in Status]: boolean }
 
-
-
 export default class GAuthRequestor extends TokenParser {
   redirect_uri: string;
   client_id: string | undefined;
@@ -83,12 +81,10 @@ export default class GAuthRequestor extends TokenParser {
       this.authConstruct.setCredentials({ refresh_token: refresh_token })
       const newAccessToken = await this.authConstruct.getRequestHeaders()
       console.log(newAccessToken.Authorization)
-      this.writeTokens({ access_token: newAccessToken.Authorization })
+      this.writeTokens({ access_token: newAccessToken.Authorization, new_access_token: true })
       const tokens = await this.loadTokens()
       this.authConstruct.setCredentials(tokens)
-
       return true
-
     } catch (err) {
       console.log(err)
       return false
@@ -105,7 +101,6 @@ export default class GAuthRequestor extends TokenParser {
     if (!await this.refreshTokenStatus()) {
       status.EXPIRED_REFRESH_TOKEN = true
       console.log("EXPIRED REFRESH TOKEN")
-
     }
     else if (await this.accessTokenStatus() && await this.refreshTokenStatus()) {
       status.OK = true
@@ -120,7 +115,6 @@ export default class GAuthRequestor extends TokenParser {
 
   async accessTokenStatus(): Promise<boolean> {
     const parsedTokens = await this.loadTokens()
-
     const { access_token } = parsedTokens
     if (access_token) {
       try {
@@ -128,7 +122,6 @@ export default class GAuthRequestor extends TokenParser {
         const accessTokenInfo = await this.authConstruct.getTokenInfo(access_token)
         console.log(accessTokenInfo)
         return true
-
       } catch (e) {
         console.log(e)
         return false
