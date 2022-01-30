@@ -10,16 +10,15 @@
     "prestart": "npm run build",
     "start": "cross-env NODE_ENV=production node dist/src/index.js",
     "test": "ts-mocha -p ./tsconfig.json test/mocha/**/**/*.ts --paths",
+    "offline": " npx sls offline --allowCache",
     "audit-resolver": "resolve-audit"
   },
   "author": "",
   "license": "ISC",
   "_moduleAliases": {
     "~root": ".",
-    "~storage": 
-      "dist/src/storage/",
-    "~api": 
-      "dist/src/api/"
+    "~storage": "dist/src/storage/",
+    "~api": "dist/src/api/"
   },
   "dependencies": {
     "@types/body-parser": "^1.19.2",
@@ -41,6 +40,8 @@
     "mocha": "^9.1.4",
     "module-alias": "^2.2.2",
     "rimraf": "^3.0.2",
+    "serverless-express": "^2.0.12",
+    "serverless-http": "^2.7.0",
     "sinon": "^12.0.1",
     "sinon-chai": "^3.7.0",
     "typescript": "^4.5.5",
@@ -52,6 +53,7 @@
     "@types/mocha": "^9.1.0",
     "concurrently": "^7.0.0",
     "nodemon": "^2.0.15",
+    "serverless-offline": "^8.4.0",
     "ts-mocha": "^9.0.2",
     "tsconfig-paths": "^3.12.0"
   }

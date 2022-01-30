@@ -1,0 +1,30 @@
+org: bagelhouse
+app: gdrive-s3-sync
+	
+service: gdrive-s3-sync
+ 
+custom:
+  serverless-offline:
+    httpPort: 3001
+  
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+  region: us-east-1
+ 
+functions:
+  app:
+    handler: ./dist/src/index.handler
+    # events:
+    #   - http: ANY /
+    #   - http: 'ANY /{proxy+}'
+    events: 
+      - http:
+          method: GET
+          path: /auth
+
+plugins:
+  - serverless-offline
+  - serverless-express 
