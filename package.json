@@ -6,11 +6,12 @@
   "scripts": {
     "build": "rimraf dist && tsc",
     "preserve": "npm run build",
-    "serve": "cross-env NODE_ENV=development concurrently \"tsc --watch\" \"nodemon -q dist/src/index.js\"",
+    "local-server": "cross-env NODE_ENV=development concurrently \"tsc --watch\" \"nodemon -q dist/src/index.js\"",
     "prestart": "npm run build",
     "start": "cross-env NODE_ENV=production node dist/src/index.js",
     "test": "ts-mocha -p ./tsconfig.json test/mocha/**/**/*.ts --paths",
-    "offline": " npx sls offline --allowCache",
+    "offline": "npx sls offline --allowCache",
+    "watcher": "cross-env NODE_ENV=development concurrently \"tsc --watch\"",
     "audit-resolver": "resolve-audit"
   },
   "author": "",

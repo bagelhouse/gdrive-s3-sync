@@ -43,8 +43,12 @@ app.get('/auth', async (req: Request, res: Response) => {
         </h1>`
         );
     }
-    if (tokenStatus.EXPIRED_ACCESS_TOKEN)
-        googleAuthRequest.setAuthentication()
+    if (tokenStatus.EXPIRED_ACCESS_TOKEN) {
+        const newTokenStatus =  await googleAuthRequest.setAuthentication()
+        if (newTokenStatus){
+            res.send("all good")
+        }
+    }
 });
 
 app.post('/sendauth', (req: Request, res: Response) => {
