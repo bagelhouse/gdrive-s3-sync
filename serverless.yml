@@ -7,7 +7,6 @@ custom:
   serverless-offline:
     httpPort: 3001
   
-
 provider:
   name: aws
   runtime: nodejs14.x
@@ -17,14 +16,15 @@ provider:
 functions:
   app:
     handler: ./dist/src/index.handler
-    # events:
-    #   - http: ANY /
-    #   - http: 'ANY /{proxy+}'
     events: 
       - http:
           method: GET
           path: /auth
 
+# package:
+#   exclude:
+#     - node_modules/**
+
 plugins:
   - serverless-offline
-  - serverless-express 
+  - serverless-express 	

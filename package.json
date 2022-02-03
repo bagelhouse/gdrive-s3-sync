@@ -4,13 +4,13 @@
   "description": "Google Drive to S3 Sync",
   "main": "./src/index.ts",
   "scripts": {
-    "build": "rimraf dist && tsc",
+    "build": "rimraf dist && tsc -p .",
     "preserve": "npm run build",
-    "local-server": "cross-env NODE_ENV=development concurrently \"tsc --watch\" \"nodemon -q dist/src/index.js\"",
+    "local-server": "npm run build -- -w",
     "prestart": "npm run build",
     "start": "cross-env NODE_ENV=production node dist/src/index.js",
     "test": "ts-mocha -p ./tsconfig.json test/mocha/**/**/*.ts --paths",
-    "offline": "npx sls offline --allowCache",
+    "offline": "npx sls offline ",
     "watcher": "cross-env NODE_ENV=development concurrently \"tsc --watch\"",
     "audit-resolver": "resolve-audit"
   },
@@ -55,7 +55,8 @@
     "concurrently": "^7.0.0",
     "nodemon": "^2.0.15",
     "serverless-offline": "^8.4.0",
-    "ts-mocha": "^9.0.2",
-    "tsconfig-paths": "^3.12.0"
+    "serverless-plugin-include-dependencies": "^5.0.0",
+    "serverless-webpack": "^5.6.1",
+    "ts-mocha": "^9.0.2"
   }
 }

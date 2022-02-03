@@ -10,6 +10,9 @@
       "stage": "dev",
       "region": "us-east-1",
       "versionFunctions": true,
+      "environment": {
+        "SERVERLESS_EXPRESS_PLATFORM": "aws"
+      },
       "compiledCloudFormationTemplate": {
         "AWSTemplateFormatVersion": "2010-09-09",
         "Description": "The AWS CloudFormation template for this Serverless application",
@@ -219,13 +222,18 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/gdrive-s3-sync/dev/1643577983780-2022-01-30T21:26:23.780Z/gdrive-s3-sync.zip"
+                "S3Key": "serverless/gdrive-s3-sync/dev/1643848893288-2022-02-03T00:41:33.288Z/gdrive-s3-sync.zip"
               },
               "Handler": "s_app.handler",
               "Runtime": "nodejs14.x",
               "FunctionName": "gdrive-s3-sync-dev-app",
               "MemorySize": 1024,
               "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "SERVERLESS_EXPRESS_PLATFORM": "aws"
+                }
+              },
               "Role": {
                 "Fn::GetAtt": [
                   "IamRoleLambdaExecution",
@@ -237,14 +245,14 @@
               "AppLogGroup"
             ]
           },
-          "AppLambdaVersionJjBd2gOIu2F6zI3hzPzgyXBNLXLocJbcDjoqjCeiko": {
+          "AppLambdaVersionyEvkP3URjYlUId3eXYuCiFUUHHMo1DjddQbgBOBg": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "AppLambdaFunction"
               },
-              "CodeSha256": "3rgwg0Fw0fFLiOc6PyGkLh6orLfX/I/Hx5b6CFOb9us="
+              "CodeSha256": "/E0SJVZnYjnJPfsoy5mnQUvuXPT8j5d8E9hTELlL6D8="
             }
           },
           "ApiGatewayRestApi": {
@@ -259,7 +267,7 @@
               "Policy": ""
             }
           },
-          "ApiGatewayResourceProxyVar": {
+          "ApiGatewayResourceAuth": {
             "Type": "AWS::ApiGateway::Resource",
             "Properties": {
               "ParentId": {
@@ -268,22 +276,19 @@
                   "RootResourceId"
                 ]
               },
-              "PathPart": "{proxy+}",
+              "PathPart": "auth",
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
               }
             }
           },
-          "ApiGatewayMethodAny": {
+          "ApiGatewayMethodAuthGet": {
             "Type": "AWS::ApiGateway::Method",
             "Properties": {
-              "HttpMethod": "ANY",
+              "HttpMethod": "GET",
               "RequestParameters": {},
               "ResourceId": {
-                "Fn::GetAtt": [
-                  "ApiGatewayRestApi",
-                  "RootResourceId"
-                ]
+                "Ref": "ApiGatewayResourceAuth"
               },
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
@@ -323,53 +328,7 @@
               "AppLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayMethodProxyVarAny": {
-            "Type": "AWS::ApiGateway::Method",
-            "Properties": {
-              "HttpMethod": "ANY",
-              "RequestParameters": {},
-              "ResourceId": {
-                "Ref": "ApiGatewayResourceProxyVar"
-              },
-              "RestApiId": {
-                "Ref": "ApiGatewayRestApi"
-              },
-              "ApiKeyRequired": false,
-              "AuthorizationType": "NONE",
-              "Integration": {
-                "IntegrationHttpMethod": "POST",
-                "Type": "AWS_PROXY",
-                "Uri": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":apigateway:",
-                      {
-                        "Ref": "AWS::Region"
-                      },
-                      ":lambda:path/2015-03-31/functions/",
-                      {
-                        "Fn::GetAtt": [
-                          "AppLambdaFunction",
-                          "Arn"
-                        ]
-                      },
-                      "/invocations"
-                    ]
-                  ]
-                }
-              },
-              "MethodResponses": []
-            },
-            "DependsOn": [
-              "AppLambdaPermissionApiGateway"
-            ]
-          },
-          "ApiGatewayDeployment1643577968148": {
+          "ApiGatewayDeployment1643848875757": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -378,8 +337,7 @@
               "StageName": "dev"
             },
             "DependsOn": [
-              "ApiGatewayMethodAny",
-              "ApiGatewayMethodProxyVarAny"
+              "ApiGatewayMethodAuthGet"
             ]
           },
           "AppLambdaPermissionApiGateway": {
@@ -528,7 +486,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/gdrive-s3-sync/dev/1643577983780-2022-01-30T21:26:23.780Z/custom-resources.zip"
+                "S3Key": "serverless/gdrive-s3-sync/dev/1643848893288-2022-02-03T00:41:33.288Z/custom-resources.zip"
               },
               "FunctionName": "gdrive-s3-sync-dev-custom-resource-apigw-cw-role",
               "Handler": "api-gateway-cloud-watch-role/handler.handler",
@@ -590,7 +548,7 @@
           "AppLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "AppLambdaVersionJjBd2gOIu2F6zI3hzPzgyXBNLXLocJbcDjoqjCeiko"
+              "Ref": "AppLambdaVersionyEvkP3URjYlUId3eXYuCiFUUHHMo1DjddQbgBOBg"
             },
             "Export": {
               "Name": "sls-gdrive-s3-sync-dev-AppLambdaFunctionQualifiedArn"
@@ -719,7 +677,8 @@
       }
     },
     "plugins": [
-      "serverless-offline"
+      "serverless-offline",
+      "serverless-express"
     ],
     "pluginsData": {},
     "functions": {
@@ -727,10 +686,11 @@
         "handler": "s_app.handler",
         "events": [
           {
-            "http": "ANY /"
-          },
-          {
-            "http": "ANY /{proxy+}"
+            "http": {
+              "method": "get",
+              "path": "auth",
+              "integration": "AWS_PROXY"
+            }
           }
         ],
         "name": "gdrive-s3-sync-dev-app",
@@ -739,7 +699,7 @@
         "timeout": 6,
         "runtime": "nodejs14.x",
         "vpc": {},
-        "versionLogicalId": "AppLambdaVersionJjBd2gOIu2F6zI3hzPzgyXBNLXLocJbcDjoqjCeiko"
+        "versionLogicalId": "AppLambdaVersionyEvkP3URjYlUId3eXYuCiFUUHHMo1DjddQbgBOBg"
       }
     },
     "configValidationMode": "warn",
@@ -771,7 +731,7 @@
     "artifact": "/Users/angelo/Documents/developer/bagelhouse/gdrive-s3-sync/.serverless/gdrive-s3-sync.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/gdrive-s3-sync/dev/1643577983780-2022-01-30T21:26:23.780Z",
+    "artifactDirectoryName": "serverless/gdrive-s3-sync/dev/1643848893288-2022-02-03T00:41:33.288Z",
     "artifact": "gdrive-s3-sync.zip"
   }
 }

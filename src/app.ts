@@ -7,13 +7,13 @@ import GAuthRequestor from '~api/gauth';
 
 dotenv.config();
 
-const PORT = process.env.PORT || 3002;
+// const PORT = process.env.PORT || 3002;
 const app: Express = express();
 
 app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.listen(PORT, () => console.log(`Running on ${PORT} ⚡`));
+// app.listen(PORT, () => console.log(`Running on ${PORT} ⚡`));
 
 const googleAuthRequest = new GAuthRequestor({
     redirect_uri: "http://localhost:3000",
