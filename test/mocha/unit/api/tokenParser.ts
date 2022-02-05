@@ -31,3 +31,24 @@ describe('[TEST][UNIT][TOKENPARSER] Running Tests...', function () {
 
 
 });
+
+
+// for later
+// async loadTokens(): Promise<Tokens> {
+//   const tokenFile = await this.fsPromises.readFile(this.TOKEN_PATH)
+//   const parsedTokens = await JSON.parse(tokenFile.toString())
+
+
+// for later
+
+// async writeTokens(tokens: Tokens) {
+//   if (tokens.access_token && tokens.new_access_token) {
+//     const parsedAccessToken = this.parseAccessToken(tokens.access_token)
+//     tokens.access_token = parsedAccessToken
+//   }
+//   // ---> using merge, will return the delta in tokens for new access_token
+//   const tokenFile = await this.fsPromises.readFile(this.TOKEN_PATH)
+//   const oldParsedTokens = await JSON.parse(tokenFile.toString())
+//   const newTokens: Tokens = deepmerge(oldParsedTokens, tokens)
+//   this.fsPromises.writeFile(this.TOKEN_PATH, JSON.stringify(newTokens))
+// }

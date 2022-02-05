@@ -6,12 +6,26 @@ service: gdrive-s3-sync
 custom:
   serverless-offline:
     httpPort: 3001
-  
+  s3:
+    host: localhost
+    port: 4569
+    directory: /tmp
+    accessKeyId: 'LOCALS3'
+    secretAccessKey: 'S3RVER'
+
 provider:
   name: aws
   runtime: nodejs14.x
   stage: dev
   region: us-east-1
+  stackTags: 
+    DISPLAY_NAME: "GDRIVE-S3-SYNC"
+  tags:
+    DISPLAY_NAME: "GDRIVE-S3-SYNC"
+
+  environment:
+    G_AUTH_AWS_SM_ID: ${ssm:/gauth/gdrive-s3-sync-token-keyid}
+
  
 functions:
   app:
@@ -25,6 +39,12 @@ functions:
 #   exclude:
 #     - node_modules/**
 
+resources: 
+  - ${file(resources/photos-s3-bucket.yml)}
+
 plugins:
   - serverless-offline
-  - serverless-express 	
+  - serverless-express
+  - serverless-s3-local
+  - serverless-plugin-resource-tagging
+

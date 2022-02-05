@@ -4,7 +4,7 @@ import fs from 'fs';
 import TokenParser from '../storage/tokenParser';
 import Tokens from '../storage/tokenParser'
 
-enum Status {
+const enum Status  {
   EXPIRED_ACCESS_TOKEN = 'EXPIRED_ACCESS_TOKEN',
   EXPIRED_REFRESH_TOKEN = 'EXPIRED_REFRESH_TOKEN',
   OK = 'OK'

@@ -1,0 +1,7 @@
+{
+    "access_token": "ya29.A0ARrdaM8zDHibv8pxhU-k-m-MuetJ1caGUUyCcsSfJysDHIGBZjRzNFFozgk5Pjc_tG_OJ9bLXA23lg896O0H3-kAHw6MOWku32kyxSzE09VUw6bp2ktIX-NRAPiz1mcHgavQ5IPSOFg2vyYHVpfYvTtrwrg29Q",
+    "refresh_token": "1//01uu-Q8Xm0FQSCgYIARAAGAESNwF-L9IrKjpi9qtCqAjMBPIXgQkChbf0TYZkLy-4s5Zl_ZGVHpELmxY8XNngONJjlV_Vr1kUWiY",
+    "scope": "https://www.googleapis.com/auth/drive.metadata.readonly",
+    "token_type": "Bearer",
+    "expiry_date": 1642874666441
+}
