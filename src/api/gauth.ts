@@ -1,28 +1,28 @@
-import { OAuth2Client } from 'google-auth-library';
-import {google} from 'googleapis';
-import fs from 'fs';
-import TokenParser from '../storage/tokenParser';
-import Tokens from '../storage/tokenParser'
+import { OAuth2Client } from "google-auth-library"
+import { google } from "googleapis"
+import fs from "fs"
+import TokenParser from "../storage/tokenParser"
+import Tokens from "../storage/tokenParser"
 
-const enum Status  {
-  EXPIRED_ACCESS_TOKEN = 'EXPIRED_ACCESS_TOKEN',
-  EXPIRED_REFRESH_TOKEN = 'EXPIRED_REFRESH_TOKEN',
-  OK = 'OK'
+const enum Status {
+  EXPIRED_ACCESS_TOKEN = "EXPIRED_ACCESS_TOKEN",
+  EXPIRED_REFRESH_TOKEN = "EXPIRED_REFRESH_TOKEN",
+  OK = "OK"
 }
 type StatusKeys = { [key in Status]: boolean }
 
 export default class GAuthRequestor extends TokenParser {
-  redirect_uri: string;
-  client_id: string | undefined;
-  scopes: Array<string>;
-  access_type: string;
-  client_secret: string | undefined;
-  hosted_domain: string;
-  state: string | undefined;
-  authConstruct: OAuth2Client;
-  authRequestURL: string | undefined;
-  authCode: string | undefined;
-  fsPromises = fs.promises;
+  redirect_uri: string
+  client_id: string | undefined
+  scopes: Array<string>
+  access_type: string
+  client_secret: string | undefined
+  hosted_domain: string
+  state: string | undefined
+  authConstruct: OAuth2Client
+  authRequestURL: string | undefined
+  authCode: string | undefined
+  fsPromises = fs.promises
 
   constructor(params: {
     redirect_uri: string,
@@ -35,12 +35,12 @@ export default class GAuthRequestor extends TokenParser {
   }) {
     super(params)
     this.redirect_uri = params.redirect_uri
-    this.client_id = params.client_id;
-    this.scopes = params.scopes;
-    this.access_type = params.access_type;
-    this.client_secret = params.client_secret;
-    this.hosted_domain = params.hosted_domain;
-    this.state = process.env.STATE;
+    this.client_id = params.client_id
+    this.scopes = params.scopes
+    this.access_type = params.access_type
+    this.client_secret = params.client_secret
+    this.hosted_domain = params.hosted_domain
+    this.state = process.env.STATE
     this.authConstruct = new google.auth.OAuth2(this.client_id, this.client_secret, this.redirect_uri)
     this.authRequestURL = undefined
     this.authCode = undefined
@@ -75,6 +75,19 @@ export default class GAuthRequestor extends TokenParser {
   }
 
   async setAuthentication(): Promise<boolean> {
+    const parsedTokens = await this.loadTokens()
+    console.log("ANGELOP TESTING", parsedTokens)
+    if (parsedTokens) {
+      console.log("Setting Credentials")
+      this.authConstruct.setCredentials(parsedTokens)
+      return true
+    }
+    else {
+      return false
+    }
+  }
+
+  async setNewAuthentication(): Promise<boolean> {
     try {
       const parsedTokens = await this.loadTokens()
       const { refresh_token } = parsedTokens
@@ -130,18 +143,33 @@ export default class GAuthRequestor extends TokenParser {
     else return false
   }
 
-  async refreshTokenStatus(): Promise<boolean> {
+  async testRefreshTokenHeaders() {
     const parsedTokens = await this.loadTokens()
-    const { expiry_date, refresh_token } = parsedTokens
-    if (expiry_date && refresh_token) {
-      const currDate = new Date()
-      const expDate = new Date(expiry_date)
-      if (expDate < currDate)
-        return true
-      else
+    const { refresh_token } = parsedTokens
+    this.authConstruct.setCredentials({ refresh_token: refresh_token })
+    try {
+      const res = await this.authConstruct.getRequestHeaders()
+      if (res)
         return false
     }
-    else return false
+    catch (err) {
+      console.log(err)
+      return true
+    }
+  }
+
+  async refreshTokenStatus(): Promise<boolean> {
+    if (await this.testRefreshTokenHeaders()) {
+      return false
+    }
+    else return true
+  }
+
+  async getAccessToken(): Promise<string | undefined> {
+    const { access_token } = await this.loadTokens()
+    if (access_token) {
+      return access_token
+    }
   }
 
 }

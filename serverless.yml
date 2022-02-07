@@ -2,10 +2,11 @@ org: bagelhouse
 app: gdrive-s3-sync
 	
 service: gdrive-s3-sync
- 
+frameworkVersion: '3'
+
 custom:
   serverless-offline:
-    httpPort: 3001
+    httpPort: 3000
   s3:
     host: localhost
     port: 4569
@@ -30,10 +31,9 @@ provider:
 functions:
   app:
     handler: ./dist/src/index.handler
-    events: 
-      - http:
-          method: GET
-          path: /auth
+    events:
+      - httpApi: '*'
+
 
 # package:
 #   exclude:

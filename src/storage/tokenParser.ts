@@ -1,7 +1,7 @@
-import fs from 'fs';
-import deepmerge from 'deepmerge';
-import _ from 'lodash'
-import SecretsManager from '~storage/secretsManager';
+import fs from "fs"
+import deepmerge from "deepmerge"
+import _ from "lodash"
+import SecretsManager from "~storage/secretsManager"
 
 export default class TokenParser {
   TOKEN_PATH: string
@@ -30,7 +30,7 @@ export default class TokenParser {
     if (secretValue) {
       const oldParsedTokens = await JSON.parse(secretValue)
       const mergedTokens: Tokens = deepmerge(oldParsedTokens, tokens)
-      const newTokens = _.omit(mergedTokens, 'new_access_token')
+      const newTokens = _.omit(mergedTokens, "new_access_token")
       await this.secretsManager.putSecretValue(JSON.stringify(newTokens))
     }
   }
@@ -51,7 +51,7 @@ export default class TokenParser {
     if (parsedAccessToken)
       return parsedAccessToken[0]
     else {
-      console.log('[TOKENPARSER][ACCESS_TOKEN] Error Parsing Access Token, ')
+      console.log("[TOKENPARSER][ACCESS_TOKEN] Error Parsing Access Token, ")
       process.exit(1)
     }
   }
