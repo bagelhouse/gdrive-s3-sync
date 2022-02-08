@@ -1,5 +1,14 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 
+- name: Configure AWS Credentials
+  uses: aws-actions/configure-aws-credentials@v1
+  with:
+    aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    aws-region: us-east-2
+    role-to-assume: ${{ secrets.AWS_GITHUB_ACTIONS_ROLE }}
+
+
 name: gdrive-s3-sync Workflow
 
 on: [push, pull_request]

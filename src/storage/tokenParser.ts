@@ -16,7 +16,8 @@ export default class TokenParser {
     this.TOKEN_PATH = params.TOKEN_PATH
     this.fsPromises = fs.promises
     this.patternToMatch = /(?<=Bearer ).+/
-    this.secretId = process.env.G_AUTH_AWS_SM_ID || undefined
+    this.secretId = process.env.IS_OFFLINE ? 
+      process.env.G_AUTH_AWS_SM_ID_TESTING : process.env.G_AUTH_AWS_SM_ID || undefined
     this.secretsManager = new SecretsManager({ secretId: this.secretId })
   }
 
@@ -31,6 +32,7 @@ export default class TokenParser {
       const oldParsedTokens = await JSON.parse(secretValue)
       const mergedTokens: Tokens = deepmerge(oldParsedTokens, tokens)
       const newTokens = _.omit(mergedTokens, "new_access_token")
+      console.log("[TOKEN PARSER] Adding Tokens", newTokens, "FOR SECRET ID", secretValue)
       await this.secretsManager.putSecretValue(JSON.stringify(newTokens))
     }
   }
@@ -39,6 +41,7 @@ export default class TokenParser {
     const secretValue = await this.secretsManager.getSecretValue()
     if (secretValue) {
       const parsedTokens = await JSON.parse(secretValue)
+      console.log("[TOKENPARSER] RETRIEVED TOKENS,", parsedTokens)
       return parsedTokens
     }
     else {

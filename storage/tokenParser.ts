@@ -1,7 +1,6 @@
-import { Credentials } from 'google-auth-library';
-import fs from 'fs';
-import deepmerge from 'deepmerge';
-
+import { Credentials } from "google-auth-library"
+import fs from "fs"
+import deepmerge from "deepmerge"
 
 interface Tokens extends Credentials {
 
@@ -29,9 +28,9 @@ interface Tokens extends Credentials {
 }
 
 export default class TokenParser {
-  TOKEN_PATH: string;
-  fsPromises = fs.promises;
-  patternToMatch: RegExp;
+  TOKEN_PATH: string
+  fsPromises = fs.promises
+  patternToMatch: RegExp
 
   constructor(params: {
     TOKEN_PATH: string

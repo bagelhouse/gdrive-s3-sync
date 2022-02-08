@@ -2,7 +2,6 @@ import { google } from "googleapis"
 import { OAuth2Client } from "google-auth-library"
 import drive from "googleapis/build/src/apis/drive/v3"
 import fs from "fs"
-import Writable from "stream"
 
 
 type QueryParams = {
@@ -140,7 +139,7 @@ export default class GDriver {
       if (folder.files) {
         folder.files.forEach(async (file) => {
           if (file.id) {
-            const outDir = __dirname + `/tmp/${folder.folderName}/`
+            const outDir = `./tmp/${folder.folderName}/`
             if (!fs.existsSync(outDir)) {
               fs.mkdirSync(outDir, { recursive: true })
             }

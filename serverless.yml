@@ -4,15 +4,19 @@ app: gdrive-s3-sync
 service: gdrive-s3-sync
 frameworkVersion: '3'
 
+useDotenv: true
+
 custom:
   serverless-offline:
     httpPort: 3000
+    noPrependStageInUrl: true
   s3:
     host: localhost
     port: 4569
     directory: /tmp
     accessKeyId: 'LOCALS3'
     secretAccessKey: 'S3RVER'
+  packageLimit: '50mb'
 
 provider:
   name: aws
@@ -26,18 +30,40 @@ provider:
 
   environment:
     G_AUTH_AWS_SM_ID: ${ssm:/gauth/gdrive-s3-sync-token-keyid}
+    G_AUTH_AWS_SM_ID_TESTING: ${ssm:/gauth/gdrive-s3-sync-token-keyid-testing}
+    G_AUTH_GOOGLE_CLIENT_ID: ${ssm:/gauth/gdrive-s3-sync-GOOGLE_CLIENT_ID}
+    G_AUTH_GOOGLE_CLIENT_SECRET_ID: ${ssm:/gauth/gdrive-s3-sync-GOOGLE_CLIENT_SECRET_ID}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - ssm:GetParameter
+        - ssm:DescribeParameters
+      Resource: "*"
+    - Effect: "Allow"
+      Action:
+        - "secretsmanager:GetSecretValue"
+        - "secretsmanager:PutSecretValue"
+        - "secretsmanager:UpdateSecret"
+        - "secretsmanager:DescribeSecret"
+        - "secretsmanager:CreateSecret"
+      Resource: "arn:aws:secretsmanager:us-east-1:059461268095:secret:gauth-1CeZSw"
 
  
 functions:
   app:
     handler: ./dist/src/index.handler
-    events:
-      - httpApi: '*'
+    events: 
+      - httpApi: ANY /
+      - httpApi: 'ANY /{proxy+}'
 
+	
+package:
+  patterns:
+    - '!node_modules/**'
+    - '!tmp/**'
+    - '!test/**'
+  excludeDevDependencies: false
 
-# package:
-#   exclude:
-#     - node_modules/**
 
 resources: 
   - ${file(resources/photos-s3-bucket.yml)}
@@ -47,4 +73,5 @@ plugins:
   - serverless-express
   - serverless-s3-local
   - serverless-plugin-resource-tagging
-
+  - serverless-plugin-include-dependencies
+  - serverless-plugin-common-excludes

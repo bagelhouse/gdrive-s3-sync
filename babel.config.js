@@ -27,8 +27,8 @@ module.exports =  (api) => {
             '!': './test',
             '~': './src',
             '~api': './src/api',
-            '~storage': './src/storage'
-
+            '~storage': './src/storage',
+            '~utils': './src/utils',
           }
         }
       ]

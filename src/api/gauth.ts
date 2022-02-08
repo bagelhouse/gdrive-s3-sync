@@ -1,8 +1,8 @@
 import { OAuth2Client } from "google-auth-library"
 import { google } from "googleapis"
 import fs from "fs"
-import TokenParser from "../storage/tokenParser"
-import Tokens from "../storage/tokenParser"
+import TokenParser from "~storage/tokenParser"
+import Tokens from "~storage/tokenParser"
 
 const enum Status {
   EXPIRED_ACCESS_TOKEN = "EXPIRED_ACCESS_TOKEN",
@@ -21,7 +21,6 @@ export default class GAuthRequestor extends TokenParser {
   state: string | undefined
   authConstruct: OAuth2Client
   authRequestURL: string | undefined
-  authCode: string | undefined
   fsPromises = fs.promises
 
   constructor(params: {
@@ -43,7 +42,6 @@ export default class GAuthRequestor extends TokenParser {
     this.state = process.env.STATE
     this.authConstruct = new google.auth.OAuth2(this.client_id, this.client_secret, this.redirect_uri)
     this.authRequestURL = undefined
-    this.authCode = undefined
   }
 
   getOAuthURL() {
@@ -63,20 +61,21 @@ export default class GAuthRequestor extends TokenParser {
     }
   }
 
-  async setupAuthentication(code: any) {
-    this.authCode = code
-    if (this.authCode != undefined) {
-      const { tokens } = await this.authConstruct.getToken(this.authCode)
-      if (tokens) typeof Tokens; {
+  async setupAuthentication(code: string) {
+    if (code) {
+      const { tokens } = await this.authConstruct.getToken(code)
+      console.log("[GAUTH] Retrieved Credentials")
+      if (tokens) {
+        console.log("[GAUTH] Setting Credentials")
+        await this.writeTokens(tokens)
         this.authConstruct.setCredentials(tokens)
-        this.writeTokens(tokens)
+        return true
       }
     }
   }
 
   async setAuthentication(): Promise<boolean> {
     const parsedTokens = await this.loadTokens()
-    console.log("ANGELOP TESTING", parsedTokens)
     if (parsedTokens) {
       console.log("Setting Credentials")
       this.authConstruct.setCredentials(parsedTokens)
@@ -94,7 +93,7 @@ export default class GAuthRequestor extends TokenParser {
       this.authConstruct.setCredentials({ refresh_token: refresh_token })
       const newAccessToken = await this.authConstruct.getRequestHeaders()
       console.log(newAccessToken.Authorization)
-      this.writeTokens({ access_token: newAccessToken.Authorization, new_access_token: true })
+      await this.writeTokens({ access_token: newAccessToken.Authorization, new_access_token: true })
       const tokens = await this.loadTokens()
       this.authConstruct.setCredentials(tokens)
       return true

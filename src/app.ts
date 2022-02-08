@@ -2,28 +2,18 @@ import express, { Express, Request, Response } from "express"
 import bodyParser from "body-parser"
 import helmet from "helmet"
 import dotenv from "dotenv"
-import GAuthRequestor from "~api/gauth"
 import GDriver from "~api/gdrive"
+import gauthRequest from "~api/gauthRequest"
 
 dotenv.config()
 
-// const PORT = process.env.PORT || 3002;
 const app: Express = express()
 
 app.use(helmet())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
-// app.listen(PORT, () => console.log(`Running on ${PORT} ⚡`));
 
-const googleAuthRequest = new GAuthRequestor({
-  redirect_uri: "http://localhost:3000",
-  client_id: process.env.CLIENT_ID,
-  scopes: ["https://www.googleapis.com/auth/drive"],
-  access_type: "offline",
-  client_secret: process.env.CLIENT_SECRET,
-  hosted_domain: "bagelhouse.co",
-  TOKEN_PATH: process.cwd() + "/src/storage/token.json"
-})
+const googleAuthRequest = gauthRequest()
 
 
 app.get("/", async (req: Request, res: Response) => {
@@ -51,6 +41,7 @@ app.get("/", async (req: Request, res: Response) => {
 
   }
   if (tokenStatus.EXPIRED_REFRESH_TOKEN) {
+    console.log("[EXPIRED REFRESH TOKEN]", googleAuthRequest.getOAuthURL())
     res.send(`<h1>
             <a href = "${googleAuthRequest.getOAuthURL()}"> Click here </a> 
         </h1>
@@ -85,10 +76,12 @@ app.get("/", async (req: Request, res: Response) => {
   }
 })
 
-app.post("/sendauth", (req: Request, res: Response) => {
+app.post("/sendauth", async (req: Request, res: Response) => {
+  console.log("[SENDING GAUTH REQUEST]",  req.body.code)
   console.log(req.body.code)
-  googleAuthRequest.setupAuthentication(req.body.code)
-  res.send("all good")
+  const test = await googleAuthRequest.setupAuthentication(req.body.code)
+  if (test)
+    res.send("all good")
 })
 
 

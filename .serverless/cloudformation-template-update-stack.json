@@ -13,7 +13,13 @@
               }
             }
           ]
-        }
+        },
+        "Tags": [
+          {
+            "Key": "DISPLAY_NAME",
+            "Value": "GDRIVE-S3-SYNC"
+          }
+        ]
       }
     },
     "ServerlessDeploymentBucketPolicy": {
@@ -74,7 +80,13 @@
     "AppLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/lambda/gdrive-s3-sync-dev-app"
+        "LogGroupName": "/aws/lambda/gdrive-s3-sync-dev-app",
+        "Tags": [
+          {
+            "Key": "DISPLAY_NAME",
+            "Value": "GDRIVE-S3-SYNC"
+          }
+        ]
       }
     },
     "IamRoleLambdaExecution": {
@@ -133,6 +145,25 @@
                       "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/gdrive-s3-sync-dev*:*:*"
                     }
                   ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "ssm:GetParameter",
+                    "ssm:DescribeParameters"
+                  ],
+                  "Resource": "*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "secretsmanager:GetSecretValue",
+                    "secretsmanager:PutSecretValue",
+                    "secretsmanager:UpdateSecret",
+                    "secretsmanager:DescribeSecret",
+                    "secretsmanager:CreateSecret"
+                  ],
+                  "Resource": "arn:aws:secretsmanager:us-east-1:059461268095:secret:gauth-1CeZSw"
                 }
               ]
             }
@@ -207,15 +238,25 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/gdrive-s3-sync/dev/1643848893288-2022-02-03T00:41:33.288Z/gdrive-s3-sync.zip"
+          "S3Key": "serverless/gdrive-s3-sync/dev/1644354954497-2022-02-08T21:15:54.497Z/gdrive-s3-sync.zip"
         },
         "Handler": "s_app.handler",
         "Runtime": "nodejs14.x",
         "FunctionName": "gdrive-s3-sync-dev-app",
         "MemorySize": 1024,
         "Timeout": 6,
+        "Tags": [
+          {
+            "Key": "DISPLAY_NAME",
+            "Value": "GDRIVE-S3-SYNC"
+          }
+        ],
         "Environment": {
           "Variables": {
+            "G_AUTH_AWS_SM_ID": "arn:aws:secretsmanager:us-east-1:059461268095:secret:gauth-1CeZSw",
+            "G_AUTH_AWS_SM_ID_TESTING": "arn:aws:secretsmanager:us-east-1:059461268095:secret:gauth-testing-L4oIKW",
+            "G_AUTH_GOOGLE_CLIENT_ID": "353119040116-udssc423u6mkbmiagk23c7rkvk418kln.apps.googleusercontent.com",
+            "G_AUTH_GOOGLE_CLIENT_SECRET_ID": "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",
             "SERVERLESS_EXPRESS_PLATFORM": "aws"
           }
         },
@@ -230,102 +271,65 @@
         "AppLogGroup"
       ]
     },
-    "AppLambdaVersionyEvkP3URjYlUId3eXYuCiFUUHHMo1DjddQbgBOBg": {
+    "AppLambdaVersion2MH79taNgnf4SA0I4mOSig6DG1TwDjvOuBciXEaTg": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "AppLambdaFunction"
         },
-        "CodeSha256": "/E0SJVZnYjnJPfsoy5mnQUvuXPT8j5d8E9hTELlL6D8="
+        "CodeSha256": "qyH7Pca2T6jRd5iIflKX/vYjfNsq27zmXMVyesbvUA4="
       }
     },
-    "ApiGatewayRestApi": {
-      "Type": "AWS::ApiGateway::RestApi",
+    "HttpApi": {
+      "Type": "AWS::ApiGatewayV2::Api",
       "Properties": {
         "Name": "dev-gdrive-s3-sync",
-        "EndpointConfiguration": {
-          "Types": [
-            "EDGE"
-          ]
-        },
-        "Policy": ""
-      }
-    },
-    "ApiGatewayResourceAuth": {
-      "Type": "AWS::ApiGateway::Resource",
-      "Properties": {
-        "ParentId": {
-          "Fn::GetAtt": [
-            "ApiGatewayRestApi",
-            "RootResourceId"
-          ]
-        },
-        "PathPart": "auth",
-        "RestApiId": {
-          "Ref": "ApiGatewayRestApi"
+        "ProtocolType": "HTTP",
+        "Tags": {
+          "DISPLAY_NAME": "GDRIVE-S3-SYNC"
         }
       }
     },
-    "ApiGatewayMethodAuthGet": {
-      "Type": "AWS::ApiGateway::Method",
+    "HttpApiLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "HttpMethod": "GET",
-        "RequestParameters": {},
-        "ResourceId": {
-          "Ref": "ApiGatewayResourceAuth"
-        },
-        "RestApiId": {
-          "Ref": "ApiGatewayRestApi"
-        },
-        "ApiKeyRequired": false,
-        "AuthorizationType": "NONE",
-        "Integration": {
-          "IntegrationHttpMethod": "POST",
-          "Type": "AWS_PROXY",
-          "Uri": {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition"
-                },
-                ":apigateway:",
-                {
-                  "Ref": "AWS::Region"
-                },
-                ":lambda:path/2015-03-31/functions/",
-                {
-                  "Fn::GetAtt": [
-                    "AppLambdaFunction",
-                    "Arn"
-                  ]
-                },
-                "/invocations"
-              ]
-            ]
+        "LogGroupName": "/aws/http-api/gdrive-s3-sync-dev",
+        "Tags": [
+          {
+            "Key": "DISPLAY_NAME",
+            "Value": "GDRIVE-S3-SYNC"
           }
-        },
-        "MethodResponses": []
-      },
-      "DependsOn": [
-        "AppLambdaPermissionApiGateway"
-      ]
+        ]
+      }
     },
-    "ApiGatewayDeployment1643848875757": {
-      "Type": "AWS::ApiGateway::Deployment",
+    "HttpApiStage": {
+      "Type": "AWS::ApiGatewayV2::Stage",
       "Properties": {
-        "RestApiId": {
-          "Ref": "ApiGatewayRestApi"
+        "ApiId": {
+          "Ref": "HttpApi"
         },
-        "StageName": "dev"
+        "StageName": "$default",
+        "AutoDeploy": true,
+        "DefaultRouteSettings": {
+          "DetailedMetricsEnabled": false
+        },
+        "Tags": {
+          "DISPLAY_NAME": "GDRIVE-S3-SYNC"
+        },
+        "AccessLogSettings": {
+          "DestinationArn": {
+            "Fn::GetAtt": [
+              "HttpApiLogGroup",
+              "Arn"
+            ]
+          },
+          "Format": "{\"requestTime\":\"$context.requestTime\",\"requestId\":\"$context.requestId\",\"apiId\":\"$context.apiId\",\"resourcePath\":\"$context.routeKey\",\"path\":\"$context.path\",\"httpMethod\":\"$context.httpMethod\",\"stage\":\"$context.stage\",\"status\":\"$context.status\",\"integrationStatus\":\"$context.integrationStatus\",\"integrationLatency\":\"$context.integrationLatency\",\"responseLatency\":\"$context.responseLatency\",\"responseLength\":\"$context.responseLength\",\"errorMessage\":\"$context.error.message\",\"format\":\"SLS_HTTP_API_LOG\",\"version\":\"1.0.0\"}"
+        }
       },
-      "DependsOn": [
-        "ApiGatewayMethodAuthGet"
-      ]
+      "DependsOn": "HttpApiLogGroup"
     },
-    "AppLambdaPermissionApiGateway": {
+    "AppLambdaPermissionHttpApi": {
       "Type": "AWS::Lambda::Permission",
       "Properties": {
         "FunctionName": {
@@ -354,140 +358,84 @@
               },
               ":",
               {
-                "Ref": "ApiGatewayRestApi"
+                "Ref": "HttpApi"
               },
-              "/*/*"
+              "/*"
             ]
           ]
         }
       }
     },
-    "ApiGatewayLogGroup": {
-      "Type": "AWS::Logs::LogGroup",
+    "HttpApiIntegrationApp": {
+      "Type": "AWS::ApiGatewayV2::Integration",
       "Properties": {
-        "LogGroupName": "/aws/api-gateway/gdrive-s3-sync-dev"
-      }
-    },
-    "CustomApiGatewayAccountCloudWatchRole": {
-      "Type": "Custom::ApiGatewayAccountRole",
-      "Version": 1,
-      "Properties": {
-        "ServiceToken": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
           "Fn::GetAtt": [
-            "CustomDashresourceDashapigwDashcwDashroleLambdaFunction",
+            "AppLambdaFunction",
             "Arn"
           ]
-        }
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 6500
       }
     },
-    "IamRoleCustomResourcesLambdaExecution": {
-      "Type": "AWS::IAM::Role",
+    "HttpApiRouteAny": {
+      "Type": "AWS::ApiGatewayV2::Route",
       "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Effect": "Allow",
-              "Principal": {
-                "Service": [
-                  "lambda.amazonaws.com"
-                ]
-              },
-              "Action": [
-                "sts:AssumeRole"
-              ]
-            }
-          ]
+        "ApiId": {
+          "Ref": "HttpApi"
         },
-        "Policies": [
-          {
-            "PolicyName": {
-              "Fn::Join": [
-                "-",
-                [
-                  "dev",
-                  "gdrive-s3-sync",
-                  "custom-resources-lambda"
-                ]
-              ]
-            },
-            "PolicyDocument": {
-              "Version": "2012-10-17",
-              "Statement": [
-                {
-                  "Effect": "Allow",
-                  "Resource": {
-                    "Fn::Join": [
-                      ":",
-                      [
-                        "arn",
-                        {
-                          "Ref": "AWS::Partition"
-                        },
-                        "iam:",
-                        {
-                          "Ref": "AWS::AccountId"
-                        },
-                        "role/*"
-                      ]
-                    ]
-                  },
-                  "Action": [
-                    "iam:AttachRolePolicy",
-                    "iam:CreateRole",
-                    "iam:ListAttachedRolePolicies",
-                    "iam:PassRole"
-                  ]
-                },
-                {
-                  "Effect": "Allow",
-                  "Resource": {
-                    "Fn::Join": [
-                      ":",
-                      [
-                        "arn",
-                        {
-                          "Ref": "AWS::Partition"
-                        },
-                        "apigateway:*::/account"
-                      ]
-                    ]
-                  },
-                  "Action": [
-                    "apigateway:GET",
-                    "apigateway:PATCH"
-                  ]
-                }
-              ]
-            }
-          }
-        ]
-      }
-    },
-    "CustomDashresourceDashapigwDashcwDashroleLambdaFunction": {
-      "Type": "AWS::Lambda::Function",
-      "Properties": {
-        "Code": {
-          "S3Bucket": {
-            "Ref": "ServerlessDeploymentBucket"
-          },
-          "S3Key": "serverless/gdrive-s3-sync/dev/1643848893288-2022-02-03T00:41:33.288Z/custom-resources.zip"
-        },
-        "FunctionName": "gdrive-s3-sync-dev-custom-resource-apigw-cw-role",
-        "Handler": "api-gateway-cloud-watch-role/handler.handler",
-        "MemorySize": 1024,
-        "Runtime": "nodejs14.x",
-        "Timeout": 180,
-        "Role": {
-          "Fn::GetAtt": [
-            "IamRoleCustomResourcesLambdaExecution",
-            "Arn"
+        "RouteKey": "ANY /",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationApp"
+              }
+            ]
           ]
         }
       },
-      "DependsOn": [
-        "IamRoleCustomResourcesLambdaExecution"
-      ]
+      "DependsOn": "HttpApiIntegrationApp"
+    },
+    "HttpApiRouteAnyProxyVar": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "ANY /{proxy+}",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationApp"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationApp"
+    },
+    "AttachmentsBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": "gdrive-s3-sync",
+        "Tags": [
+          {
+            "Key": "DISPLAY_NAME",
+            "Value": "GDRIVE-S3-SYNC"
+          }
+        ]
+      }
     },
     "CWLSubFilterAppLogGroupUsEast1": {
       "Type": "AWS::Logs::SubscriptionFilter",
@@ -499,13 +447,13 @@
         }
       }
     },
-    "CWLSubFilterApiGatewayLogGroupUsEast1": {
+    "CWLSubFilterHttpApiLogGroupUsEast1": {
       "Type": "AWS::Logs::SubscriptionFilter",
       "Properties": {
         "DestinationArn": "arn:aws:logs:us-east-1:802587217904:destination:df619b8a-7b85-407e-ab1b-35d6fd7f790d#NWq0gKRwbylNMRHMrs#gdrive-s3-sync#dev",
-        "FilterPattern": "\"SLS_ACCESS_LOG\"",
+        "FilterPattern": "\"SLS_HTTP_API_LOG\"",
         "LogGroupName": {
-          "Ref": "ApiGatewayLogGroup"
+          "Ref": "HttpApiLogGroup"
         }
       }
     }
@@ -533,21 +481,30 @@
     "AppLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "AppLambdaVersionyEvkP3URjYlUId3eXYuCiFUUHHMo1DjddQbgBOBg"
+        "Ref": "AppLambdaVersion2MH79taNgnf4SA0I4mOSig6DG1TwDjvOuBciXEaTg"
       },
       "Export": {
         "Name": "sls-gdrive-s3-sync-dev-AppLambdaFunctionQualifiedArn"
       }
     },
-    "ServiceEndpoint": {
-      "Description": "URL of the service endpoint",
+    "HttpApiId": {
+      "Description": "Id of the HTTP API",
+      "Value": {
+        "Ref": "HttpApi"
+      },
+      "Export": {
+        "Name": "sls-gdrive-s3-sync-dev-HttpApiId"
+      }
+    },
+    "HttpApiUrl": {
+      "Description": "URL of the HTTP API",
       "Value": {
         "Fn::Join": [
           "",
           [
             "https://",
             {
-              "Ref": "ApiGatewayRestApi"
+              "Ref": "HttpApi"
             },
             ".execute-api.",
             {
@@ -556,13 +513,17 @@
             ".",
             {
               "Ref": "AWS::URLSuffix"
-            },
-            "/dev"
+            }
           ]
         ]
       },
       "Export": {
-        "Name": "sls-gdrive-s3-sync-dev-ServiceEndpoint"
+        "Name": "sls-gdrive-s3-sync-dev-HttpApiUrl"
+      }
+    },
+    "AttachmentsBucketName": {
+      "Value": {
+        "Ref": "AttachmentsBucket"
       }
     }
   }
