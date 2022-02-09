@@ -1,29 +1,24 @@
-import AWS from "aws-sdk"
-import { ConfigurationOptions } from "aws-sdk/lib/config-base"
+
+import { defaultProvider } from "@aws-sdk/credential-provider-node"
+import { SecretsManager as AWSSecretsManager } from "@aws-sdk/client-secrets-manager"
+
 
 export default class SecretsManager {
 
-  clientCredentials: ConfigurationOptions
-  client: AWS.SecretsManager
+  client: AWSSecretsManager
   secretId: string | undefined
 
   constructor(params: { secretId: string | undefined }
   ) {
-    this.clientCredentials = {
-      region: process.env.IS_OFFLINE ? process.env.LOCAL_AWS_REGION_ENV: process.env.AWS_REGION_ENV ,
-      accessKeyId: process.env.IS_OFFLINE ? process.env.LOCAL_ACCESS_KEY_ID : process.env.ACCESS_KEY_ID,
-      secretAccessKey: process.env.IS_OFFLINE ? process.env.LOCAL_SECRET_ACCESS_KEY : process.env.SECRET_ACCESS_KEY
-    }
-    this.client = new AWS.SecretsManager({ ...this.clientCredentials })
+    this.client = new AWSSecretsManager(defaultProvider)
     this.secretId = params.secretId
   }
-
 
 
   async getSecretValue(): Promise<string | undefined> {
     console.log("[SECRETS MANAGER] SECRET KEY ID", this.secretId)
     if (this.secretId) {
-      const res = await this.client.getSecretValue({ SecretId: this.secretId }).promise()
+      const res = await this.client.getSecretValue({ SecretId: this.secretId })
       console.log("[SECRETS MANAGER] GETTING SECRET", this.secretId)
       if (res.SecretString) {
         return res.SecretString
@@ -41,8 +36,8 @@ export default class SecretsManager {
     console.log("[SECRETS MANAGER] SECRET KEY ID", this.secretId)
     console.log("[SECRETS MANAGER] PUTTING SECRET", value)
     if (value && this.secretId) {
-      const res = await this.client.putSecretValue({ SecretId: this.secretId, SecretString: value }).promise()
-      console.log(res.$response)
+      const res = await this.client.putSecretValue({ SecretId: this.secretId, SecretString: value })
+      console.log(res.$metadata)
     }
     else {
       console.log("some error happened")

@@ -47,6 +47,12 @@ provider:
         - "secretsmanager:DescribeSecret"
         - "secretsmanager:CreateSecret"
       Resource: "arn:aws:secretsmanager:us-east-1:059461268095:secret:gauth-1CeZSw"
+    - Effect: "Allow"
+      Action:
+        - "s3:PutObject"
+        - "s3:GetObject"
+        - "s3:DeleteObject"
+      Resource: { "Fn::Join": ["", ["arn:aws:s3:::gdrive-s3-sync", "/*" ] ] }
 
  
 functions:

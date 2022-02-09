@@ -133,8 +133,6 @@ export default class GDriver {
   }
 
   async downLoadFiles(fileList: Array<FileList>) {
-
-
     fileList.forEach((folder) => {
       if (folder.files) {
         folder.files.forEach(async (file) => {
@@ -156,7 +154,6 @@ export default class GDriver {
               console.log("Error during download", err)
             })
             fileDownload.data.pipe(tempDestination)
-
           }
         })
       }

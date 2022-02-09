@@ -1,17 +1,18 @@
-# gdrive-s3-sync
+# gdrive-s3-sync 🔄
 
-Backend to Sync Google Drive Files to AWS S3 for Photography Website
+A full-blown Express.js/Serverless API to Sync Google Drive Files to Amazon S3
 
-Uses Google Auth Library to securily authenticate client before syncing
-
-- Token will be stored in SSM and encrypted
+- Uses Google Auth Library to securily authenticate client before syncing!
+- Tokens are stored in AWS Secrets Manager
+- Fully functional parameter store for all types of client ids
+- "SyncManager" endpoints, be able to call all types of endpoints for various use cases
 
 Features Github Action Testing
 
 ### Todo / In Progress
 
-- Conversion to Serverless
+- Sync Manager (File Comparison between S3, Gdrive)
 - GDrive File Pull
-- File Comparison between S3, Gdrive
-- S3 Upload
+- Mocha Testing
+- S3 Upload File Stream upload
 

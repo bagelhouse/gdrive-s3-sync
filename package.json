@@ -20,6 +20,9 @@
     "~api": "dist/src/api/"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.49.0",
+    "@aws-sdk/client-secrets-manager": "^3.50.0",
+    "@aws-sdk/credential-provider-node": "^3.50.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.16.7",
     "@babel/plugin-transform-flow-strip-types": "^7.16.7",
     "@babel/plugin-transform-reserved-words": "^7.16.7",
