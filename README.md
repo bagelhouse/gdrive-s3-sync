@@ -6,6 +6,7 @@ A full-blown Express.js/Serverless API to Sync Google Drive Files to Amazon S3
 - Tokens are stored in AWS Secrets Manager
 - Fully functional parameter store for all types of client ids
 - "SyncManager" endpoints, be able to call all types of endpoints for various use cases
+- Full CI-CD -> Serverless Framework Managed Resources/Provisioning, GitHub Actions for CI
 
 Features Github Action Testing
 
