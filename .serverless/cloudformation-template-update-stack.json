@@ -164,6 +164,22 @@
                     "secretsmanager:CreateSecret"
                   ],
                   "Resource": "arn:aws:secretsmanager:us-east-1:059461268095:secret:gauth-1CeZSw"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:PutObject",
+                    "s3:GetObject",
+                    "s3:DeleteObject"
+                  ],
+                  "Resource": "arn:aws:s3:::gdrive-s3-sync/*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:ListBucket"
+                  ],
+                  "Resource": "arn:aws:s3:::gdrive-s3-sync"
                 }
               ]
             }
@@ -238,7 +254,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/gdrive-s3-sync/dev/1644354954497-2022-02-08T21:15:54.497Z/gdrive-s3-sync.zip"
+          "S3Key": "serverless/gdrive-s3-sync/dev/1644427723726-2022-02-09T17:28:43.726Z/gdrive-s3-sync.zip"
         },
         "Handler": "s_app.handler",
         "Runtime": "nodejs14.x",
@@ -271,14 +287,14 @@
         "AppLogGroup"
       ]
     },
-    "AppLambdaVersion2MH79taNgnf4SA0I4mOSig6DG1TwDjvOuBciXEaTg": {
+    "AppLambdaVersionYWK8j5TNI3LrEG1KzSsya6csPTmvs5aljDlhsuwtSM": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "AppLambdaFunction"
         },
-        "CodeSha256": "qyH7Pca2T6jRd5iIflKX/vYjfNsq27zmXMVyesbvUA4="
+        "CodeSha256": "fZDPAryQSrE9wEASWJj804YXBb5Fj+r5ax5YMJawA8U="
       }
     },
     "HttpApi": {
@@ -481,7 +497,7 @@
     "AppLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "AppLambdaVersion2MH79taNgnf4SA0I4mOSig6DG1TwDjvOuBciXEaTg"
+        "Ref": "AppLambdaVersionYWK8j5TNI3LrEG1KzSsya6csPTmvs5aljDlhsuwtSM"
       },
       "Export": {
         "Name": "sls-gdrive-s3-sync-dev-AppLambdaFunctionQualifiedArn"

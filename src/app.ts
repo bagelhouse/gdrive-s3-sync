@@ -2,9 +2,8 @@ import express, { Express, Request, Response } from "express"
 import bodyParser from "body-parser"
 import helmet from "helmet"
 import dotenv from "dotenv"
-import GDriver from "~api/gdrive"
-import gauthRequest from "~api/gauthRequest"
-import S3Manager from "~storage/s3Manager"
+import gauthRequest from "~/google-api/gauthRequestor"
+import SyncManager from "~/syncManager"
 
 dotenv.config()
 
@@ -18,31 +17,13 @@ const googleAuthRequest = gauthRequest()
 
 app.get("/", async (req: Request, res: Response) => {
 
-  const tokenStatus = await googleAuthRequest.tokenStatus()
+  const tokenStatus = await googleAuthRequest.tokenStatus()  
 
-  const test = new S3Manager()
-  console.log(await test.getS3Files({Bucket: "gdrive-s3-sync", Prefix: ""}))
-  
+  const test = new SyncManager()
 
   if (tokenStatus.OK) {
     console.log("AUTHENTICATION STATUS OK")
     await googleAuthRequest.setAuthentication()
-    const gDrive = new GDriver({
-      queries: [{
-        searchFolder: true,
-        folderName: "production",
-        searchTrashedItems: false,
-      },
-      {
-        searchFolder: true,
-        folderName: "staging",
-        searchTrashedItems: false
-      }],
-      authCredentials: googleAuthRequest.authConstruct
-    })
-    const test = await gDrive.listFiles()
-    console.log(test)
-    test ? gDrive.downLoadFiles(test) : null
     res.send("all good")
 
   }
@@ -62,21 +43,6 @@ app.get("/", async (req: Request, res: Response) => {
   if (tokenStatus.EXPIRED_ACCESS_TOKEN) {
     const newTokenStatus = await googleAuthRequest.setNewAuthentication()
     if (newTokenStatus) {
-      const gDrive = new GDriver({
-        queries: [{
-          searchFolder: true,
-          folderName: "production",
-          searchTrashedItems: false,
-        },
-        {
-          searchFolder: true,
-          folderName: "staging",
-          searchTrashedItems: false
-        }],
-        authCredentials: googleAuthRequest.authConstruct
-      })
-      const test = await gDrive.listFiles()
-      console.log(test)
       res.send("all good")
     }
   }

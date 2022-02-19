@@ -10,13 +10,6 @@ custom:
   serverless-offline:
     httpPort: 3000
     noPrependStageInUrl: true
-  s3:
-    host: localhost
-    port: 4569
-    directory: /tmp
-    accessKeyId: 'LOCALS3'
-    secretAccessKey: 'S3RVER'
-  packageLimit: '50mb'
 
 provider:
   name: aws
@@ -52,7 +45,11 @@ provider:
         - "s3:PutObject"
         - "s3:GetObject"
         - "s3:DeleteObject"
-      Resource: { "Fn::Join": ["", ["arn:aws:s3:::gdrive-s3-sync", "/*" ] ] }
+      Resource: "arn:aws:s3:::gdrive-s3-sync/*"
+    - Effect: "Allow"
+      Action:
+        - "s3:ListBucket"
+      Resource: "arn:aws:s3:::gdrive-s3-sync"
 
  
 functions:
@@ -76,8 +73,7 @@ resources:
 
 plugins:
   - serverless-offline
-  - serverless-express
-  - serverless-s3-local
+  - serverless-express 
   - serverless-plugin-resource-tagging
   - serverless-plugin-include-dependencies
   - serverless-plugin-common-excludes

@@ -1,5 +1,5 @@
 import chai, { expect } from "chai"
-import TokenParser from "~storage/tokenParser"
+import TokenParser from "~/utils/tokenParser"
 import sinon from "sinon"
 import sinonChai from "sinon-chai"
 chai.use(sinonChai)

@@ -26,9 +26,10 @@ module.exports =  (api) => {
           alias: {
             '!': './test',
             '~': './src',
-            '~api': './src/api',
-            '~storage': './src/storage',
+            '~google-api': './src/google-api',
+            '~aws': './src/aws',
             '~utils': './src/utils',
+            '~config': './src/config'
           }
         }
       ]

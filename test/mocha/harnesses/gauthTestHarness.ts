@@ -1,4 +1,4 @@
-import GAuthRequestor from "~/api/gauth"
+import GAuthRequestor from "~/google-api/gauth"
 
 const googleAuthRequest = new GAuthRequestor({
   redirect_uri: "http://localhost:3000",

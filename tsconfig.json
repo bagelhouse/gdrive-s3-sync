@@ -38,14 +38,17 @@
       "!/*": [
         "test/*"
       ],
-      "~storage/*": [
-        "src/storage/*"
+      "~aws/*": [
+        "src/aws/*"
       ],
-      "~api/*": [
-        "src/api/*"
+      "~google-api/*": [
+        "src/google-api/*"
       ],
       "~utils/*": [
         "src/utils/*"
+      ],
+      "~config/*": [
+        "src/config/*"
       ]
     }, /* Specify a set of entries that re-map imports to additional lookup locations. */
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
